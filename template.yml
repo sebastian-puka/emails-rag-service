@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: AWS Lambda to encode emails (Python)
 
 Resources:
-  emailbedrock:
+  emails-rag-service:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
