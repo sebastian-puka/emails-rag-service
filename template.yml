@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS Lambda to encode emails (Python)
+
+Resources:
+  emailbedrock:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 3
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.14
+      Architectures:
+        - x86_64
+      EphemeralStorage:
+        Size: 512
+      Environment:
+        Variables:
+          AWS_REGION: !Ref AwsRegion
+          VECTOR_BUCKET: !Ref VectorBucket
+          INDEX_NAME: !Ref IndexName
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 21600
+        MaximumRetryAttempts: 2
+      PackageType: Zip
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0
+            - Effect: Allow
+              Action:
+                - s3vectors:PutVectors
+              Resource: arn:aws:s3vectors:us-east-1:214899526005:bucket/!Ref VectorBucket/index/!Ref IndexName
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+              Resource: arn:aws:logs:us-east-1:214899526005:*
+            - Effect: Allow
+              Action:
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource:
+                - arn:aws:logs:us-east-1:214899526005:log-group:/aws/lambda/!Ref LambdaFunctionName:*
+      RecursiveLoop: Terminate
+      SnapStart:
+        ApplyOn: None
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: Auto
+
+
+
+Parameters:
+  LambdaFunctionName:
+    Type: String
+    Description: Name of the deployed Lambda function
+    Default: emails-rag-service
+
+  AwsRegion:
+    Type: String
+    Description: AWS region for the Lambda function
+    Default: us-east-1
+
+  VectorBucket:
+    Type: String
+    Description: S3 bucket for storing vectors
+    Default: email-test
+
+  IndexName:
+    Type: String
+    Description: Index name for vector storage
+    Default: notifications
+
+Outputs:
+  LambdaFunctionName:
+    Description: Name of the deployed Lambda function
+    Value: !Ref LambdaFunctionName
