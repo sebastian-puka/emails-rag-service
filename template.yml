@@ -53,6 +53,8 @@ Resources:
           Properties:
             Path: /
             Method: POST
+            Auth:
+              AuthorizationType: AWS_IAM
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
 
