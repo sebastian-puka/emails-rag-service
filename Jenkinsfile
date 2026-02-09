@@ -16,6 +16,8 @@ pipeline {
         
         stage('SAM Build') {
             steps {
+                sh 'pwd'
+                sh 'export PATH=/usr/local/bin:$PATH'
                 sh 'sam build'
             }
         }
