@@ -7,7 +7,7 @@ Resources:
   MyApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: Prod
+      StageName: default
       Auth:
         DefaultAuthorizer: AWS_IAM
 
