@@ -3,6 +3,14 @@ Transform: AWS::Serverless-2016-10-31
 Description: AWS Lambda to encode emails (Python)
 
 Resources:
+
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        DefaultAuthorizer: AWS_IAM
+
   emailsragservice:
     Type: AWS::Serverless::Function
     Properties:
@@ -10,7 +18,7 @@ Resources:
       Description: ''
       MemorySize: 128
       Timeout: 3
-      Handler: lambda_function.lambda_handler 
+      Handler: lambda_function.lambda_handler
       Runtime: python3.11
       Architectures:
         - x86_64
@@ -25,25 +33,25 @@ Resources:
         MaximumRetryAttempts: 2
       PackageType: Zip
       Policies:
-          - Statement:
-              - Effect: Allow
-                Action:
-                  - bedrock:InvokeModel
-                Resource: arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0
-              - Effect: Allow
-                Action:
-                  - s3vectors:PutVectors
-                Resource: !Sub arn:aws:s3vectors:${AwsRegion}:${AWSAccountId}:bucket/${VectorBucket}/index/${IndexName}
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                Resource: !Sub arn:aws:logs:${AwsRegion}:${AWSAccountId}:*
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource:
-                  - !Sub arn:aws:logs:${AwsRegion}:${AWSAccountId}:log-group:/aws/lambda/${LambdaFunctionName}:*
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0
+            - Effect: Allow
+              Action:
+                - s3vectors:PutVectors
+              Resource: !Sub arn:aws:s3vectors:${AwsRegion}:${AWSAccountId}:bucket/${VectorBucket}/index/${IndexName}
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+              Resource: !Sub arn:aws:logs:${AwsRegion}:${AWSAccountId}:*
+            - Effect: Allow
+              Action:
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource:
+                - !Sub arn:aws:logs:${AwsRegion}:${AWSAccountId}:log-group:/aws/lambda/${LambdaFunctionName}:*
       RecursiveLoop: Terminate
       SnapStart:
         ApplyOn: None
@@ -51,10 +59,9 @@ Resources:
         Api1:
           Type: Api
           Properties:
+            RestApiId: !Ref MyApi
             Path: /
             Method: POST
-            Auth:
-              AuthorizationType: AWS_IAM
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
 
