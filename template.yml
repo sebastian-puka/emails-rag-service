@@ -18,7 +18,6 @@ Resources:
         Size: 512
       Environment:
         Variables:
-          AWS_REGION: !Ref AwsRegion
           VECTOR_BUCKET: !Ref VectorBucket
           INDEX_NAME: !Ref IndexName
       EventInvokeConfig:
