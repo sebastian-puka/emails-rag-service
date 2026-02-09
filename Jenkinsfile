@@ -31,7 +31,8 @@ pipeline {
                       LambdaFunctionName=${LambdaFunctionName} \
                       AwsRegion=${AWS_DEFAULT_REGION} \
                       VectorBucket=${VECTOR_BUCKET} \
-                      IndexName=${INDEX_NAME}
+                      IndexName=${INDEX_NAME} \
+                      AWSAccountId=${AWS_ACCOUNT_ID}
                 '''
             }
         }

@@ -34,17 +34,17 @@ Resources:
             - Effect: Allow
               Action:
                 - s3vectors:PutVectors
-              Resource: arn:aws:s3vectors:us-east-1:214899526005:bucket/!Ref VectorBucket/index/!Ref IndexName
+              Resource: arn:aws:s3vectors:!Ref AwsRegion:!Ref AWSAccountId:bucket/!Ref VectorBucket/index/!Ref IndexName
             - Effect: Allow
               Action:
                 - logs:CreateLogGroup
-              Resource: arn:aws:logs:us-east-1:214899526005:*
+              Resource: arn:aws:logs:!Ref AwsRegion:!Ref AWSAccountId:*
             - Effect: Allow
               Action:
                 - logs:CreateLogStream
                 - logs:PutLogEvents
               Resource:
-                - arn:aws:logs:us-east-1:214899526005:log-group:/aws/lambda/!Ref LambdaFunctionName:*
+                - arn:aws:logs:!Ref AwsRegion:!Ref AWSAccountId:log-group:/aws/lambda/!Ref LambdaFunctionName:*
       RecursiveLoop: Terminate
       SnapStart:
         ApplyOn: None
@@ -79,6 +79,10 @@ Parameters:
     Type: String
     Description: Index name for vector storage
     Default: notifications
+  AWSAccountId:
+    Type: String
+    Description: AWS Account ID for resource permissions
+    Default: 214899526005
 
 Outputs:
   LambdaFunctionName:
